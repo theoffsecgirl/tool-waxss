@@ -2,7 +2,7 @@
 
 Herramienta en Python para detectar WAF y probar vulnerabilidades de Cross-Site Scripting (XSS) en formularios web.
 
-`tool-waxss` está pensada para entornos de bug bounty, pentesting web y laboratorios de seguridad, donde se necesita:
+`waxss` está pensada para entornos de bug bounty, pentesting web y laboratorios de seguridad, donde se necesita:
 
 - identificar si un sitio está protegido por un WAF,
 - extraer formularios web (incluyendo los generados dinámicamente),
