@@ -1,26 +1,24 @@
 # tool-waxss
 
-Herramienta en Python para detectar WAF y probar vulnerabilidades de Cross-Site Scripting (XSS) en formularios web.
-
-`waxss` está pensada para entornos de bug bounty, pentesting web y laboratorios de seguridad, donde se necesita:
-
-- identificar si un sitio está protegido por un WAF,
-- extraer formularios web (incluyendo los generados dinámicamente),
-- probar diferentes payloads de XSS sobre esos formularios,
-- registrar los resultados de forma clara y repetible.
+Herramienta ofensiva en Python para **detección de WAF** y **pruebas de XSS** sobre formularios web.  
+Pensada para bug bounty, pentesting web y laboratorios de seguridad ofensiva.
 
 ---
 
-##  Características
+## Características
 
-- Detección de WAF mediante `wafw00f`.
-- Extracción de formularios HTML:
-  - formularios estáticos,
-  - formularios generados por JavaScript (mediante `requests-html`),
-  - iframes.
-- Pruebas de XSS sobre los campos detectados.
-- Payloads básicos y avanzados.
-- Salida clara en consola con `colorama`.
+- Detección de WAF usando `wafw00f`
+- Extracción de formularios:
+  - HTML estático
+  - JS renderizado (`requests-html`)
+  - formatos mixtos (inputs, textarea, select)
+- Pruebas de XSS:
+  - payloads básicos
+  - payloads específicos según WAF
+- CLI profesional
+- Modo verbose
+- Control de timeout
+- Banner minimalista estilo herramienta ofensiva
 
 ---
 
@@ -28,17 +26,16 @@ Herramienta en Python para detectar WAF y probar vulnerabilidades de Cross-Site 
 
 ### Sistema
 
-- Python 3.x
+- Python 3.x  
 - Linux recomendado
-- Dependencias instaladas
 
-### Dependencias de Python
+### Dependencias Python
 
 ```bash
 pip install requests requests-html beautifulsoup4 colorama
 ```
 
-### Herramienta externa: wafw00f
+### Dependencia externa
 
 ```bash
 apt install wafw00f
@@ -52,60 +49,78 @@ pip install wafw00f
 
 ---
 
-##  Instalación
+## Instalación
 
 ```bash
 git clone https://github.com/theoffsecgirl/tool-waxss.git
 cd tool-waxss
+chmod +x waxss.py
 ```
 
-(Opcional)
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install requests requests-html beautifulsoup4 colorama wafw00f
-```
+(Repositorios privados/entornos virtuales recomendados para pruebas.)
 
 ---
 
-## Uso básico
+## Uso con CLI 
+
+### Ejecución básica
 
 ```bash
-python3 waxss.py
+python3 waxss.py -u https://example.com
 ```
 
-Introduce la URL objetivo cuando se solicite.
+### Opciones
+
+| Flag | Descripción |
+|------|-------------|
+| `--skip-waf` | No ejecutar detección de WAF |
+| `--no-js` | No renderizar JavaScript (rápido, menos profundo) |
+| `--timeout 30` | Cambiar timeout de peticiones |
+| `-v` | Modo verbose |
+
+### Ejemplos
+
+```bash
+python3 waxss.py -u https://example.com --skip-waf
+python3 waxss.py -u https://example.com --no-js -v
+python3 waxss.py -u https://example.com --timeout 40
+```
 
 ---
 
 ## Casos de uso
 
-- Comprobar XSS reflejado rápidamente.
-- Validar comportamiento del WAF.
-- Identificar puntos de entrada para pruebas manuales.
-- Apoyo para flujos de bug bounty.
+- Detectar XSS reflejado rápidamente
+- Identificar puntos de entrada para pentesting web
+- Validar comportamiento del WAF ante payloads
+- Automatizar una primera fase de análisis antes de manual
 
 ---
 
 ## Limitaciones
 
-- No detecta todos los tipos de XSS.
-- Puede generar falsos positivos/negativos.
-- No gestiona CSRF ni autenticación avanzada.
-- No sustituye revisión manual.
+- No gestiona autenticación, CSRF ni cookies complejas
+- Renderizado JS limitado por `requests-html`
+- Puede dar falsos positivos/negativos
+- No sustituye validación manual
 
 ---
 
 ## Uso ético
 
-Solo en sistemas propios, con permiso o en programas de bug bounty autorizados.
+Úsala solo con:
+
+- permiso explícito  
+- tus propios sistemas  
+- programas de bug bounty autorizados  
+
+El uso indebido es ilegal.
 
 ---
 
 ## Licencia
 
-Incluida en el archivo `LICENSE`.
+MIT License (incluida en el archivo `LICENSE.md`)
 
 ---
 
@@ -113,6 +128,6 @@ Incluida en el archivo `LICENSE`.
 
 Desarrollado por **TheOffSecGirl**
 
-- GitHub: https://github.com/theoffsecgirl
-- Web técnica: https://www.theoffsecgirl.com
+- GitHub: https://github.com/theoffsecgirl  
+- Web: https://www.theoffsecgirl.com  
 - Academia: https://www.northstaracademy.io
